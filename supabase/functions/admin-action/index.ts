@@ -24,8 +24,22 @@ Deno.serve(async (req) => {
     return error ? json({ error: error.message }, 400) : json({ ok: true, weekId: data.id });
   }
   if (action === 'remove-signup') {
+    const { data: signup, error: lookupError } = await db.from('signups').select('id,week_id,position,status').eq('id', payload.signupId).maybeSingle();
+    if (lookupError) return json({ error: lookupError.message }, 400);
+    if (!signup) return json({ error: 'Signup not found' }, 404);
     const { error } = await db.from('signups').delete().eq('id', payload.signupId);
-    return error ? json({ error: error.message }, 400) : json({ ok: true });
+    if (error) return json({ error: error.message }, 400);
+    let promotedSignupId = null;
+    if (signup.status === 'confirmed') {
+      const next = await db.from('signups').select('id').eq('week_id', signup.week_id).eq('position', signup.position).eq('status', 'waitlisted').order('created_at', { ascending: true }).order('id', { ascending: true }).limit(1).maybeSingle();
+      if (next.error) return json({ error: next.error.message }, 400);
+      if (next.data) {
+        const update = await db.from('signups').update({ status: 'confirmed' }).eq('id', next.data.id);
+        if (update.error) return json({ error: update.error.message }, 400);
+        promotedSignupId = next.data.id;
+      }
+    }
+    return json({ ok: true, promotedSignupId });
   }
   if (action === 'update-video') {
     const { error } = await db.from('matches').update({ video_url: payload.videoUrl || null }).eq('id', payload.matchId);

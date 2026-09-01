@@ -9,6 +9,7 @@ Open `index.html` in a browser. The demo persists data in `localStorage`, so it 
 ## Included
 
 - Position-specific weekly caps and automatic waitlisting
+- Earliest waitlisted player is promoted automatically when a confirmed signup is removed
 - Elo-balanced fixed-position team generation
 - Public leaderboard
 - Players can build a multi-position history while choosing only one position per week

@@ -13,9 +13,19 @@ Deno.serve(async (req) => {
   const { signupId } = await req.json();
   if (!signupId) return response({ error: 'Signup is required' }, 400);
   const db = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
-  const { data: signup } = await db.from('signups').select('id').eq('id', signupId).eq('auth_user_id', user.id).maybeSingle();
+  const { data: signup } = await db.from('signups').select('id,week_id,position,status').eq('id', signupId).eq('auth_user_id', user.id).maybeSingle();
   if (!signup) return response({ error: 'Signup not found for this account' }, 404);
   const { error } = await db.from('signups').delete().eq('id', signupId).eq('auth_user_id', user.id);
   if (error) return response({ error: error.message }, 500);
-  return response({ ok: true });
+  let promoted = null;
+  if (signup.status === 'confirmed') {
+    const next = await db.from('signups').select('id').eq('week_id', signup.week_id).eq('position', signup.position).eq('status', 'waitlisted').order('created_at', { ascending: true }).order('id', { ascending: true }).limit(1).maybeSingle();
+    if (next.error) return response({ error: next.error.message }, 500);
+    if (next.data) {
+      const update = await db.from('signups').update({ status: 'confirmed' }).eq('id', next.data.id);
+      if (update.error) return response({ error: update.error.message }, 500);
+      promoted = next.data.id;
+    }
+  }
+  return response({ ok: true, promotedSignupId: promoted });
 });
