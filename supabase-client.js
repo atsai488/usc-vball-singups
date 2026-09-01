@@ -24,5 +24,7 @@
     ,async generateTeams(payload) { return client.functions.invoke('generate-teams', { body: payload }); }
     ,async recordMatch(payload) { return client.functions.invoke('record-match', { body: payload }); }
     ,async session() { return client.auth.getSession(); }
+    ,async user() { const result = await client.auth.getUser(); return result.data?.user ?? null; }
+    ,async signInWithGoogle() { return client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } }); }
   };
 })();
