@@ -12,6 +12,7 @@ button { cursor:pointer; }
 .nav-tab.active { color:var(--ink); }
 .nav-tab.active:after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:3px; background:var(--accent); border-radius:3px 3px 0 0; }
 .admin-link { height:auto; border:1px solid var(--line); border-radius:9px; padding:10px 14px; color:var(--ink); }
+.account-menu { position:relative; margin-left:0; }.account-menu summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:9px; color:var(--ink); }.account-menu summary::-webkit-details-marker { display:none; }.account-avatar { display:grid; place-items:center; width:34px; height:34px; border-radius:50%; background:var(--accent-2); color:#07111f; font-weight:700; }.account-name { max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; }.account-popover { position:absolute; right:0; top:45px; width:190px; z-index:4; padding:10px; background:var(--panel); border:1px solid var(--line); border-radius:10px; box-shadow:0 14px 35px #0008; }.account-popover button { width:100%; text-align:left; background:none; border:0; color:var(--ink); padding:9px 8px; border-radius:6px; }.account-popover button:hover { background:var(--panel-2); }.account-popover .danger-text { color:var(--danger); }
 .remove-signup { background:none; border:0; color:var(--muted); font-size:11px; padding:2px 0 2px 8px; }.remove-signup:hover { color:var(--danger); }
 .signup-form > div:has(#contact) { display:none; }
 .admin-link span { color:var(--accent); padding-left:5px; }
